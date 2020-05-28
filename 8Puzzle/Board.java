@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import edu.princeton.cs.algs4.StdRandom;
 public class Board {
     private int[][] tiles; private int n;
-    private int[] pos0=new int[2]; private Board twin=null;
+    private int pos0r,pos0c; private Board twin=null;
     // create a board from an n-by-n array of tiles,
     // where tiles[row][col] = tile at (row, col)
     
@@ -18,8 +18,8 @@ public class Board {
             for(int j=0;j<l;j++){
                 this.tiles[i][j]=tiles[i][j];
                 if(tiles[i][j]==0){
-                    pos0[0]=i;
-                    pos0[1]=j;
+                    pos0r=i;
+                    pos0c=j;
                 }                
             }
         }
@@ -34,6 +34,7 @@ public class Board {
             return true;
         }
         catch(ArrayIndexOutOfBoundsException e){
+            
             return false;
         }
     }
@@ -74,8 +75,8 @@ public class Board {
                 int val=this.tiles[i][j];
                 if(val==0)
                     continue;
-                int goali=val/n;
-                int goalj=val%n==0?n-1:val%n-1;
+                int goali=(val-1)/n;
+                int goalj=(val-1)%n;
                 distance+=Math.abs(goali-i)+Math.abs(goalj-j);
                 //System.out.println(diff+" "+distance);
             }
@@ -103,8 +104,8 @@ public class Board {
         
         Board otherBoard=(Board)obj;
         
-        if(otherBoard.tiles==this.tiles)
-            return true;
+        if(otherBoard.dimension()!=this.dimension())
+            return false;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if(tiles[i][j]!=otherBoard.tiles[i][j])
@@ -116,7 +117,7 @@ public class Board {
     
     // all neighboring boards
     public Iterable<Board> neighbors(){
-        int i=pos0[0]; int j=pos0[1];
+        int i=pos0r; int j=pos0c;
         ArrayList<Board> neighbours=new ArrayList<Board>();
         if(swap(i,j,i-1,j)){
             neighbours.add(new Board(this.tiles));
@@ -148,7 +149,7 @@ public class Board {
         int j=StdRandom.uniform(n);
         int u=StdRandom.uniform(n);
         int v=StdRandom.uniform(n);
-        while((i==pos0[0]&&j==pos0[1])||(u==pos0[0]&&v==pos0[1])){
+        while((i==pos0r&&j==pos0c)||(u==pos0r&&v==pos0c)||(i==u&&j==v)){
             
             i=StdRandom.uniform(n);
             j=StdRandom.uniform(n);
@@ -156,7 +157,7 @@ public class Board {
             v=StdRandom.uniform(n);
         }
         swap(i,j,u,v);
-         this.twin=new Board(this.tiles);
+        this.twin=new Board(this.tiles);
         swap(i,j,u,v);
         return this.twin;
         
@@ -165,9 +166,9 @@ public class Board {
     // unit testing (not graded)
     public static void main(String[] args){
         
-        int[][] tiles={{1,0,3},{4,2,5},{7,8,6}};
+        //int[][] tiles={{1,0,3},{4,2,5},{7,8,6}};
         int[][] tilesb={{1,0,3},{4,2,5},{7,6,8}};
-        //int[][] tiles={{1,2,3},{4,5,6},{7,8,0}};
+        int[][] tiles={{2,0},{3,1}};
         Board myBoard=new Board(tiles);
         Board otherBoard=new Board(tilesb);
         System.out.println(myBoard.toString());   
